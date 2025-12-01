@@ -42,5 +42,5 @@ RUN npm ci --only=production
 # Run database migrations
 RUN npx prisma generate
 
-# Start the application
-CMD ["node", "dist/main.js"]
+# Start the application (run migrations in production before starting)
+CMD ["sh", "-lc", "npx prisma migrate deploy && node dist/main.js"]
