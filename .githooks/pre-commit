@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Local pre-commit hook to prevent committing .env files and turborepo cache
+set -euo pipefail
+
+echo "Running local pre-commit checks..."
+
+# Run large-file check script (if git repo available)
+if command -v git >/dev/null 2>&1; then
+  if [ -x "./.github/scripts/check-large-files.sh" ]; then
+    ./.github/scripts/check-large-files.sh
+  fi
+
+  # Block adding .env files or .turbo cache
+  STAGED=$(git diff --cached --name-only)
+  if echo "$STAGED" | grep -E "(^|/)\.env$|(^|/)\.env\\.|^\.turbo/|/\.turbo/" >/dev/null; then
+    echo "Commit blocked: committing '.env' or '.turbo' files is not allowed. Add them to .gitignore instead." >&2
+    exit 1
+  fi
+fi
+
+echo "Pre-commit checks passed."
+exit 0
