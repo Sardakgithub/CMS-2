@@ -8,6 +8,7 @@ export class UploadService {
     private s3Client: S3Client;
     private bucketName: string;
     private publicBaseUrl: string;
+    private isConfigured: boolean;
 
     constructor(private configService: ConfigService) {
         const accountId = this.configService.get<string>('R2_ACCOUNT_ID');
@@ -35,15 +36,17 @@ export class UploadService {
                 },
                 forcePathStyle: false,
             });
-            console.log('R2 S3Client initialized successfully');
+            console.log('✓ R2 S3Client initialized successfully');
+            this.isConfigured = true;
         } else {
-            console.warn('R2 storage is not configured - missing credentials');
+            console.warn('⚠️  R2 storage is not configured - uploads will fail until R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, and R2_SECRET_ACCESS_KEY are provided.');
+            this.isConfigured = false;
         }
     }
 
     async uploadImage(file: Express.Multer.File, userId: string): Promise<string> {
-        if (!this.s3Client) {
-            throw new Error('R2 storage is not configured');
+        if (!this.isConfigured || !this.s3Client) {
+            throw new Error('R2 storage is not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, and R2_SECRET_ACCESS_KEY environment variables.');
         }
 
         const fileExtension = file.originalname.split('.').pop();

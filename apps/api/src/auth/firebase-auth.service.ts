@@ -6,6 +6,7 @@ import { DecodedIdToken, getAuth } from 'firebase-admin/auth'
 @Injectable()
 export class FirebaseAuthService {
   private app: App
+  private isConfigured: boolean
 
   constructor(private readonly configService: ConfigService) {
     if (!getApps().length) {
@@ -14,8 +15,10 @@ export class FirebaseAuthService {
       let privateKey = this.configService.get<string>('FIREBASE_PRIVATE_KEY')
 
       if (!projectId || !clientEmail || !privateKey) {
-        // Firebase admin is not fully configured; fail fast when guard is used
-        throw new Error('Firebase admin environment variables are not set')
+        // Firebase is not configured; warn but allow startup (will fail when guard is invoked)
+        console.warn('⚠️  Firebase admin environment variables are not set. Auth will fail until credentials are provided.')
+        this.isConfigured = false
+        return
       }
 
       if (privateKey.includes('\\n')) {
@@ -29,12 +32,17 @@ export class FirebaseAuthService {
           privateKey,
         }),
       })
+      this.isConfigured = true
     }
 
-    this.app = getApps()[0]
+    this.app = getApps()[0] || null
   }
 
   async verifyAuthorizationHeader(authorization?: string): Promise<DecodedIdToken> {
+    if (!this.isConfigured || !this.app) {
+      throw new UnauthorizedException('Firebase authentication is not configured. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY environment variables.')
+    }
+
     if (!authorization) {
       throw new UnauthorizedException('Missing Authorization header')
     }
