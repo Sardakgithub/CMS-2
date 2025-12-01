@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100;
+  }
+}
+
+@layer utilities {
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+}
+
+/* EditorJS Dark Mode Overrides */
+.ce-block {
+  color: #e2e8f0;
+  /* slate-200 */
+}
+
+.ce-header {
+  color: #f8fafc;
+  /* slate-50 */
+  font-weight: 700;
+}
+
+.ce-paragraph {
+  color: #cbd5e1;
+  /* slate-300 */
+}
+
+.cdx-list__item {
+  list-style-type: disc;
+  list-style-position: inside;
+}
+
+.ce-toolbar__content,
+.ce-block__content {
+  max-width: none;
+}
+
+/* Fix for image tool caption */
+.cdx-input {
+  background-color: transparent;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  border-radius: 0.375rem;
+}
+
+.image-tool__caption {
+  color: #94a3b8;
+  /* slate-400 */
+}

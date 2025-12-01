@@ -1,0 +1,54 @@
+
+> web@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.33
+  - Environments: .env.local
+  - Experiments (use with caution):
+    · typedRoutes
+
+   Creating an optimized production build ...
+(node:8924) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:6448) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/13) ...
+   Generating static pages (3/13) 
+   Generating static pages (6/13) 
+   Generating static pages (9/13) 
+ ✓ Generating static pages (13/13)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ○ /                                    1.25 kB         180 kB
+├ ○ /_not-found                          873 B          88.3 kB
+├ ƒ /[username]                          2.03 kB         195 kB
+├ ○ /bookmarks                           1.19 kB         194 kB
+├ ○ /chill                               2.49 kB         182 kB
+├ ƒ /chill/[id]                          4.36 kB         196 kB
+├ ○ /dashboard                           1.29 kB         194 kB
+├ ○ /explore                             1.14 kB         194 kB
+├ ○ /login                               2.53 kB         190 kB
+├ ○ /new-post                            2.44 kB         182 kB
+├ ƒ /posts/[id]/edit                     2.18 kB         181 kB
+├ ○ /settings                            3.85 kB         183 kB
+├ ○ /setup                               2.49 kB         182 kB
+└ ○ /signup                              2.5 kB          190 kB
++ First Load JS shared by all            87.4 kB
+  ├ chunks/1dd3208c-d43392b1ee1cb8cf.js  53.6 kB
+  ├ chunks/528-451525a5d07b29e0.js       31.7 kB
+  └ other shared chunks (total)          2.06 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+npm notice
+npm notice New major version of npm available! 10.9.2 -> 11.6.4
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.4
+npm notice To update run: npm install -g npm@11.6.4
+npm notice

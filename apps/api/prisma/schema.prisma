@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum FeedMode {
+  CHRONOLOGICAL
+  PERSONALIZED
+  LIST
+}
+
+model User {
+  id        String   @id
+  username  String   @unique
+  displayName String?
+  createdAt DateTime @default(now())
+  profile   Profile?
+  posts     Post[]
+  comments  Comment[]
+  bookmarks Bookmark[]
+  likes     Like[]
+  followers Follow[] @relation("followers")
+  following Follow[] @relation("following")
+  settings  AccountSettings?
+  questSessionsAsPlayer1 QuestSession[] @relation("Player1")
+  questSessionsAsPlayer2 QuestSession[] @relation("Player2")
+  roomParticipants RoomParticipant[]
+  messages Message[]
+}
+
+model Profile {
+  userId      String  @id
+  user        User    @relation(fields: [userId], references: [id])
+  bio         String?
+  avatarUrl   String?
+  isPrivate   Boolean @default(false)
+  subscriptionEnabled Boolean @default(false)
+}
+
+model Post {
+  id         String   @id @default(cuid())
+  authorId   String
+  author     User     @relation(fields: [authorId], references: [id])
+  contentJson Json
+  visibility  String   @default("public")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  comments    Comment[]
+  bookmarks   Bookmark[]
+  likes      Like[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model Bookmark {
+  userId    String
+  user      User   @relation(fields: [userId], references: [id])
+  postId    String
+  post      Post   @relation(fields: [postId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@id([userId, postId])
+}
+
+model Like {
+  userId    String
+  user      User   @relation(fields: [userId], references: [id])
+  postId    String
+  post      Post   @relation(fields: [postId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@id([userId, postId])
+}
+
+model Follow {
+  followerId String
+  followingId String
+  follower   User @relation("followers", fields: [followerId], references: [id])
+  following  User @relation("following", fields: [followingId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@id([followerId, followingId])
+}
+
+model AccountSettings {
+  userId   String  @id
+  user     User    @relation(fields: [userId], references: [id])
+  feedMode FeedMode @default(CHRONOLOGICAL)
+  isZenMode Boolean @default(false)
+}
+
+// --- Micro-Quest Arcade ---
+
+model Quest {
+  id          String   @id @default(cuid())
+  type        String   // "riddle", "story", "drawing", "choice"
+  prompt      String
+  duration    Int      @default(60) // seconds
+  createdAt   DateTime @default(now())
+  sessions    QuestSession[]
+}
+
+model QuestSession {
+  id          String   @id @default(cuid())
+  questId     String
+  quest       Quest    @relation(fields: [questId], references: [id])
+  player1Id   String
+  player1     User     @relation("Player1", fields: [player1Id], references: [id])
+  player2Id   String
+  player2     User     @relation("Player2", fields: [player2Id], references: [id])
+  status      String   // "pending", "active", "completed"
+  result      Json?    // Store results/summary
+  createdAt   DateTime @default(now())
+  endedAt     DateTime?
+}
+
+// --- Ambient Co-Chill Rooms ---
+
+model Room {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   // "lo-fi", "focus", "creative", "social"
+  activeUsers Int      @default(0)
+  createdAt   DateTime @default(now())
+  participants RoomParticipant[]
+  messages    Message[]
+}
+
+model RoomParticipant {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  roomId    String
+  room      Room     @relation(fields: [roomId], references: [id])
+  status    String?  // "chill", "working", etc.
+  emoji     String?
+  joinedAt  DateTime @default(now())
+
+  @@unique([userId, roomId])
+}
+
+// --- Tone-Shift Chat ---
+
+model Message {
+  id              String   @id @default(cuid())
+  content         String
+  originalContent String?
+  tone            String?  // "dramatic", "cute", "sarcastic", etc.
+  senderId        String
+  sender          User     @relation(fields: [senderId], references: [id])
+  roomId          String?
+  room            Room?    @relation(fields: [roomId], references: [id])
+  createdAt       DateTime @default(now())
+}
