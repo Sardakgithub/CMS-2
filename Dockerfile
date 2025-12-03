@@ -7,7 +7,7 @@ COPY package*.json ./
 COPY apps/api/package*.json ./apps/api/
 
 # Install dependencies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy source code
 COPY . .
@@ -37,7 +37,7 @@ EXPOSE 10000
 WORKDIR /app/apps/api
 
 # Install production dependencies
-RUN npm ci --only=production
+RUN npm ci --only=production --legacy-peer-deps
 
 # Run database migrations
 RUN npx prisma generate
