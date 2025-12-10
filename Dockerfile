@@ -24,7 +24,7 @@ RUN npx prisma generate --schema=apps/api/prisma/schema.prisma
 FROM node:18-alpine
 WORKDIR /app
 
-# Copy built application
+# Copy built application and dependencies
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/apps/api/package*.json ./apps/api/
@@ -40,12 +40,6 @@ EXPOSE 10000
 
 # Set the working directory to the API
 WORKDIR /app/apps/api
-
-# Install production dependencies
-RUN npm ci --only=production --legacy-peer-deps
-
-# Generate Prisma client in production stage (must be done after installing dependencies)
-RUN npx prisma generate --schema=prisma/schema.prisma
 
 # Run database migrations at container start via entrypoint script (handles missing DB env)
 # Copy entrypoint script and make it executable
