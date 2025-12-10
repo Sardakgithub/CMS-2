@@ -44,6 +44,9 @@ WORKDIR /app/apps/api
 # Install production dependencies
 RUN npm ci --only=production --legacy-peer-deps
 
+# Generate Prisma client in production stage (must be done after installing dependencies)
+RUN npx prisma generate --schema=prisma/schema.prisma
+
 # Run database migrations at container start via entrypoint script (handles missing DB env)
 # Copy entrypoint script and make it executable
 COPY --from=builder /app/deploy/docker-entrypoint.sh /app/docker-entrypoint.sh
