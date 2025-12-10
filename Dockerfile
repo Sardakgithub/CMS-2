@@ -44,8 +44,10 @@ WORKDIR /app/apps/api
 # Install production dependencies
 RUN npm ci --only=production --legacy-peer-deps
 
-# Run database migrations
-# Prisma client is already generated in the builder stage; run migrations at container start
+# Run database migrations at container start via entrypoint script (handles missing DB env)
+# Copy entrypoint script and make it executable
+COPY --from=builder /app/deploy/docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
 
-# Start the application (run migrations in production before starting)
-CMD ["sh", "-lc", "npx prisma migrate deploy && node dist/main.js"]
+# Start the application via entrypoint which will run migrations (if configured) then start the server
+CMD ["/bin/sh", "/app/docker-entrypoint.sh"]
