@@ -16,6 +16,10 @@ COPY . .
 # Build only the API (web is deployed separately on Render)
 RUN npm run --workspace=api build
 
+# Generate Prisma client in the builder so the runtime artifacts
+# are present in `node_modules` when copied to the final image.
+RUN npx prisma generate --schema=apps/api/prisma/schema.prisma
+
 # Production stage
 FROM node:18-alpine
 WORKDIR /app
@@ -41,7 +45,7 @@ WORKDIR /app/apps/api
 RUN npm ci --only=production --legacy-peer-deps
 
 # Run database migrations
-RUN npx prisma generate
+# Prisma client is already generated in the builder stage; run migrations at container start
 
 # Start the application (run migrations in production before starting)
 CMD ["sh", "-lc", "npx prisma migrate deploy && node dist/main.js"]
