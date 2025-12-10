@@ -11,7 +11,7 @@ else
   max_attempts=10
   until [ $attempts -ge $max_attempts ]
   do
-    if npx prisma migrate deploy --schema=apps/api/prisma/schema.prisma; then
+    if npx prisma migrate deploy --schema=prisma/schema.prisma; then
       echo "✓ Prisma migrations applied"
       break
     fi

@@ -10,9 +10,7 @@ services:
       - key: PORT
         value: 10000
       - key: DATABASE_URL
-        fromDatabase:
-          name: chronos
-          property: connectionString
+        value: postgresql://chronos_sardak_user:a5ycUDCxWAbnZMfNzVcb5bdTXuPCjJaq@dpg-d4nttba4d50c739v102g-a/chronos_sardak
       - key: R2_ACCOUNT_ID
         required: true
       - key: R2_ACCESS_KEY_ID
