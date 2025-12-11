@@ -1,5 +1,5 @@
 # Build stage
-FROM node:18-alpine AS builder
+FROM node:18-bullseye-slim AS builder
 WORKDIR /app
 
 # Copy package files
@@ -21,7 +21,7 @@ RUN npm run --workspace=api build
 RUN npx prisma generate --schema=apps/api/prisma/schema.prisma
 
 # Production stage
-FROM node:18-alpine
+FROM node:18-bullseye-slim
 WORKDIR /app
 
 # Copy built application and dependencies
