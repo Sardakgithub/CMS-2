@@ -10,6 +10,5 @@ coverage
 .prisma
 pnpm-lock.yaml
 yarn.lock
-package-lock.json
 .DS_Store
  .turbo/
