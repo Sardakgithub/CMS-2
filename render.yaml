@@ -54,7 +54,7 @@ services:
     buildCommand: |
       echo "Building web application..."
       cd apps/web
-      npm ci
+      npm install --legacy-peer-deps
       npm run build
     startCommand: |
       cd apps/web
