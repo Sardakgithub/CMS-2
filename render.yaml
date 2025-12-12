@@ -52,11 +52,8 @@ services:
       - key: NEXT_PUBLIC_API_BASE_URL
         value: https://chronos-api-gbaq.onrender.com
     buildCommand: |
-      echo "Building web application..."
-      NODE_ENV=development npm install --legacy-peer-deps
+      npm install --legacy-peer-deps
       npm run build --workspace=web
-    startCommand: |
-      cd apps/web
-      npm run start -- -p $PORT
+    startCommand: npm run start --workspace=web -- -p $PORT
     healthCheckPath: /
     autoDeploy: true
