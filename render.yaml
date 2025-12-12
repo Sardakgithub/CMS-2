@@ -53,7 +53,7 @@ services:
         value: https://chronos-api-gbaq.onrender.com
     buildCommand: |
       echo "Building web application..."
-      npm install --legacy-peer-deps
+      NODE_ENV=development npm install --legacy-peer-deps
       npm run build --workspace=web
     startCommand: |
       cd apps/web
